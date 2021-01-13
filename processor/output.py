@@ -7,7 +7,7 @@ class OutputVideoProcessor(BaseProcessor):
     def __init__(self, src_queue):
         super().__init__(src_queue)
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.out = cv2.VideoWriter('output.avi', fourcc, 20, (1920, 1080))
+        self.out = cv2.VideoWriter('output.avi', fourcc, 20, (1080, 1920))
 
     def run(self) -> None:
         print('Output video processor started')
