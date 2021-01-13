@@ -23,7 +23,7 @@ class PreProcessingProcessor(BaseProcessor):
         print('Preprocessing processor started')
         cap = cv2.VideoCapture(self.video_path)
         frame_order = 0
-        while cap.isOpened() and frame_order < 100:
+        while cap.isOpened() and frame_order < 50:
             if frame_order % 2:
                 ret, frame = cap.read()
                 try:
