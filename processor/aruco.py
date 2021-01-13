@@ -59,7 +59,7 @@ class ArucoProcessor(processor.BaseProcessor):
                 for location in locations:
                     raw_new_points = np.append(raw_new_points, np.array([np.mean(location[0], axis=0)]), axis=0)
                 # sort those points to get the following order:
-                # [topleft, topright, bottomleft, bottomright]
+                # [topright, topleft, bottomright, bottomleft]
                 # the order still be maintained even if some points are missing
                 new_points = raw_new_points[np.argsort(raw_new_points[:, 0])]
                 # if we got all 4 points (best case) then just replace it
