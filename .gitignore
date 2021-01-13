@@ -1,5 +1,6 @@
 venv
-test.avi
+*.jpeg
+*.jpg
 output.avi
 .idea
 .DS_Store
