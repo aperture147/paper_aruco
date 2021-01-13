@@ -2,3 +2,4 @@ venv
 test.avi
 output.avi
 .idea
+.DS_Store
