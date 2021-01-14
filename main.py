@@ -1,15 +1,10 @@
-import cv2
+import skvideo.io
+import numpy as np
 
-if __name__ == '__main__':
-    cap = cv2.VideoCapture('test.avi')
-    while cap.isOpened():
-        ret, frame = cap.read()
+outputdata = np.random.random(size=(5, 480, 680, 3)) * 255
+outputdata = outputdata.astype(np.uint8)
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        cv2.imshow('frame', gray)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
+writer = skvideo.io.FFmpegWriter("outputvideo.mp4")
+for i in range(5):
+    writer.writeFrame(outputdata[i, :, :, :])
+writer.close()

@@ -1,20 +1,21 @@
+import numpy as np
 from processor import BaseProcessor
-import cv2
+import skvideo.io
 
 
 class OutputVideoProcessor(BaseProcessor):
 
     def __init__(self, src_queue):
         super().__init__(src_queue)
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.out = cv2.VideoWriter('output.avi', fourcc, 15, (1920, 1080))
+        self.writer = skvideo.io.FFmpegWriter("outputvideo.mp4")
 
     def run(self) -> None:
         print('Output video processor started')
         while True:
-            frame_tuple = self.src_queue.get()
+            frame_tuple = self._src_receiver.recv()
             if frame_tuple[1].shape == (1, 1):
+                print('Received dead frame')
                 break
-            self.out.write(cv2.cvtColor(frame_tuple[1], cv2.COLOR_GRAY2BGR))
+            self.writer.writeFrame(frame_tuple[1])
+        self.writer.close()
         print('Output video processor finished')
-        self.out.release()

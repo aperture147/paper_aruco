@@ -1,4 +1,5 @@
 import cv2
+import time
 import numpy as np
 
 import processor
@@ -25,8 +26,8 @@ class ArucoProcessor(processor.BaseProcessor):
 
         # adjust dictionary parameters for better marker detection
         parameters = cv2.aruco.DetectorParameters_create()
-        parameters.cornerRefinementMethod = 5
-        parameters.errorCorrectionRate = 0.3
+        # parameters.cornerRefinementMethod = 5
+        # parameters.errorCorrectionRate = 0.3
 
         self.aruco_dict = aruco_dict
         self.parameters = parameters
@@ -41,16 +42,19 @@ class ArucoProcessor(processor.BaseProcessor):
         print('Aruco processor started')
         frame_order = 0
         while True:
-            frame_tuple = self.src_queue.get()
-            print("Aruco frame:", frame_tuple[0])
+            t = time.time()
+            frame_tuple = self._src_receiver.recv()
+            print(time.time() - t)
             if frame_tuple[1].shape == (1, 1):
-                self.queue.put(frame_tuple)
+                print('Received dead frame')
+                self.sender.send(frame_tuple)
                 break
-
+            print("Aruco frame:", frame_tuple[0])
             frame_order = frame_tuple[0]
             frame = frame_tuple[1]
 
             locations, ids, rejected = cv2.aruco.detectMarkers(frame, self.aruco_dict, parameters=self.parameters)
+
             # Just get the top four point. Not the best idea
             locations = locations[:4]
 
@@ -89,7 +93,7 @@ class ArucoProcessor(processor.BaseProcessor):
             # There maybe no paper or the aruco is to hard to detect. Try to use the old points
             else:
                 continue
-            self.queue.put((frame_order, self._warp_frame(frame, self.points, DEFAULT_POINTS, (1080, 1920))))
+            self.sender.send((frame_order, self._warp_frame(frame, self.points, DEFAULT_POINTS, (1080, 1920))))
             frame_order += 1
+        self.sender((frame_order, np.zeros((1, 1))))
         print('Aruco processor finished')
-        self.queue.put((frame_order, np.zeros((1, 1))))

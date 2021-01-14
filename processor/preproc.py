@@ -5,7 +5,7 @@ import numpy as np
 
 class PreProcessingProcessor(BaseProcessor):
 
-    def __init__(self, video_path="test.avi"):
+    def __init__(self, video_path="test1.avi"):
         self.video_path = video_path
         super().__init__(None)
 
@@ -23,15 +23,15 @@ class PreProcessingProcessor(BaseProcessor):
         print('Preprocessing processor started')
         cap = cv2.VideoCapture(self.video_path)
         frame_order = 0
-        while cap.isOpened() and frame_order < 50:
+        while cap.isOpened() and frame_order < 200:
             if frame_order % 2:
                 ret, frame = cap.read()
                 try:
                     gray = self._denoise(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
-                    self.queue.put((frame_order, gray))
+                    self.sender.send((frame_order, gray))
                 except cv2.error:
                     continue
             frame_order += 1
-        self.queue.put((frame_order, np.zeros((1, 1))))
+        self.sender.send((frame_order, np.zeros((1, 1))))
         print('Preprocessing processor finished')
         cap.release()
