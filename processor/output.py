@@ -1,4 +1,3 @@
-import numpy as np
 from processor import BaseProcessor
 import skvideo.io
 
